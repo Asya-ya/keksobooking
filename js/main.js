@@ -26,7 +26,23 @@ const PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
 ];
 
+const MAX_PRICE = 50000;
+
+const MAX_ROOMS = 6;
+
+const MAX_GUESTS = 12;
+
 const COUNT_ADVERTS = 10;
+
+const Latitude = {
+  MIN: 35.65000,
+  MAX: 35.70000,
+};
+
+const Longitude = {
+  MIN: 139.70000,
+  MAX: 139.80000,
+};
 
 const getRandomInt = (min, max) => {
   if (!Number.isInteger(min) || !Number.isInteger(max)) {
@@ -64,8 +80,8 @@ const createAdvert = () => {
   let adverts = [];
 
   for (let i = 0; i < COUNT_ADVERTS; i++) {
-    let x = getRandomNumber(35.65000, 35.70000, 5);
-    let y = getRandomNumber(139.70000, 139.80000, 5);
+    let x = getRandomNumber(Latitude.MIN, Latitude.MAX, 5);
+    let y = getRandomNumber(Longitude.MIN, Longitude.MAX, 5);
 
     adverts.push(
       {
@@ -75,10 +91,10 @@ const createAdvert = () => {
         offer: {
           title: 'Лучшее место для отдыха!',
           address: '' + x + ', ' + y,
-          price: getRandomInt(1, 50000),
+          price: getRandomInt(1, MAX_PRICE),
           type: getRandomArrayElement(TYPES),
-          rooms: getRandomInt(1, 6),
-          guests: getRandomInt(1, 12),
+          rooms: getRandomInt(1, MAX_ROOMS),
+          guests: getRandomInt(1, MAX_GUESTS),
           checkin: getRandomArrayElement(TIME),
           checkout: getRandomArrayElement(TIME),
           features: shuffleArray(FEATURES).slice(getRandomInt(0, FEATURES.length - 1)),
