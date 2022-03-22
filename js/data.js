@@ -50,8 +50,8 @@ const createAdvert = () => {
   let adverts = [];
 
   for (let i = 0; i < COUNT_ADVERTS; i++) {
-    let x = getRandomNumber(Latitude.MIN, Latitude.MAX, 5);
-    let y = getRandomNumber(Longitude.MIN, Longitude.MAX, 5);
+    const x = getRandomNumber(Latitude.MIN, Latitude.MAX, 5);
+    const y = getRandomNumber(Longitude.MIN, Longitude.MAX, 5);
 
     adverts.push(
       {
