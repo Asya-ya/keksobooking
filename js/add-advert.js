@@ -1,9 +1,4 @@
-import { createAdvert } from './data.js';
-
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-const mapCanvas = document.querySelector('#map-canvas');
-
-const similarAdverts = createAdvert();
 
 const createFeatures = (items, container) => {
   if (items) {
@@ -42,9 +37,7 @@ const createPhotos = (items, container) => {
   }
 };
 
-const adverts = [];
-
-similarAdverts.forEach(({author, offer}) => {
+const createPopup = ({author, offer}) => {
   const newCard = cardTemplate.cloneNode(true);
 
   let typeAdvert = '';
@@ -74,7 +67,7 @@ similarAdverts.forEach(({author, offer}) => {
   createPhotos(offer.photos, newCard.querySelector('.popup__photos'));
   newCard.querySelector('.popup__avatar').src = author.avatar;
 
-  adverts.push(newCard);
-})
+  return newCard;
+};
 
-mapCanvas.appendChild(adverts[0]);
+export { createPopup };

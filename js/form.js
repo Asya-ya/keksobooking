@@ -1,13 +1,32 @@
 const adForm = document.querySelector('.ad-form');
-const inputType = adForm.querySelector('#type');
-const inputPrice = adForm.querySelector('#price');
-const inputTimein = adForm.querySelector('#timein');
-const inputTimeout = adForm.querySelector('#timeout');
+const typeInput = adForm.querySelector('#type');
+const priceInput = adForm.querySelector('#price');
+const timeinInput = adForm.querySelector('#timein');
+const timeoutInput = adForm.querySelector('#timeout');
+const adFormElements = adForm.querySelectorAll('fieldset');
 
-inputType.addEventListener('change', () => {
+// Неактивное состояние формы
+const disableForm = (form, elements, classForm) => {
+  form.classList.add(`${classForm}--disabled`);
+
+  for (let element of elements) {
+    element.disabled = true;
+  }
+}
+
+// Активное состояние формы
+const enableForm = (form, elements, classForm) => {
+  form.classList.remove(`${classForm}--disabled`);
+
+  for (let element of elements) {
+    element.disabled = false;
+  }
+}
+
+typeInput.addEventListener('change', () => {
   let newPrice = 0;
 
-  switch(inputType.value) {
+  switch(typeInput.value) {
     case 'flat':
       newPrice = 1000;
       break;
@@ -22,14 +41,18 @@ inputType.addEventListener('change', () => {
       break;
   }
 
-  inputPrice.min = newPrice;
-  inputPrice.placeholder = newPrice;
+  priceInput.min = newPrice;
+  priceInput.placeholder = newPrice;
 });
 
-inputTimein.addEventListener('change', () => {
-  inputTimeout.value = inputTimein.value;
+timeinInput.addEventListener('change', () => {
+  timeoutInput.value = timeinInput.value;
 });
 
-inputTimeout.addEventListener('change', () => {
-  inputTimein.value = inputTimeout.value;
+timeoutInput.addEventListener('change', () => {
+  timeinInput.value = timeoutInput.value;
 })
+
+disableForm(adForm, adFormElements, adForm.classList[0]);
+
+export { disableForm, enableForm, adForm, adFormElements};
