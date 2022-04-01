@@ -26,8 +26,20 @@ const getRandomArrayElement = (elements) => {
   return elements[getRandomInt(0, elements.length - 1)];
 };
 
+const getAvatarsArray = (max) => {
+  let avatars = []
+  for (let i = 1; i <= max; i++) {
+    if (i < 10) {
+      avatars.push(`0${i}`);
+    } else {
+      avatars.push(`${i}`);
+    }
+  }
+  return avatars;
+}
+
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
 }
 
-export { getRandomInt, getRandomNumber, getRandomArrayElement, shuffleArray };
+export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray };

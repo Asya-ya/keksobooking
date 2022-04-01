@@ -1,3 +1,10 @@
+const Types = {
+  flat: 'Квартира',
+  bungalow: 'Бунгало',
+  house: 'Дом',
+  palace: 'Дворец',
+};
+
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const createFeatures = (items, container) => {
@@ -37,31 +44,34 @@ const createPhotos = (items, container) => {
   }
 };
 
+const getRoomsEnding = (rooms) => {
+  if (rooms === 1) {
+    return 'комната';
+  } else if (rooms > 1 && rooms < 5) {
+    return 'комнаты';
+  } else {
+    return 'комнат';
+  }
+};
+
+const getGuestsEnding = (guests) => {
+  if (guests === 1) {
+    return 'гостя';
+  } else {
+    return 'гостей';
+  }
+};
+
 const createPopup = ({author, offer}) => {
   const newCard = cardTemplate.cloneNode(true);
 
-  let typeAdvert = '';
-  switch (offer.type) {
-    case 'flat':
-      typeAdvert = 'Квартира';
-      break
-    case 'bungalow':
-      typeAdvert = 'Бунгало';
-      break;
-    case 'house':
-      typeAdvert = 'Дом';
-      break;
-    case 'palace':
-      typeAdvert = 'Дворец';
-      break;
-  }
-
+  // Добавление информации в шаблон
   newCard.querySelector('.popup__title').textContent = offer.title;
   newCard.querySelector('.popup__text--address').textContent = offer.address;
-  newCard.querySelector('.popup__text--price').textContent = offer.price + ' ₽/ночь';
-  newCard.querySelector('.popup__type').textContent = typeAdvert;
-  newCard.querySelector('.popup__text--capacity').textContent = offer.rooms + ' комнаты для ' + offer.guests + ' гостей';
-  newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
+  newCard.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
+  newCard.querySelector('.popup__type').textContent = Types[offer.type];
+  newCard.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsEnding(offer.rooms)} для ${offer.guests} ${getGuestsEnding(offer.guests)}`;
+  newCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
   createFeatures(offer.features, newCard.querySelector('.popup__features'));
   newCard.querySelector('.popup__description').textContent = offer.description;
   createPhotos(offer.photos, newCard.querySelector('.popup__photos'));

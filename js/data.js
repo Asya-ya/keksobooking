@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomNumber, getRandomArrayElement, shuffleArray } from './util.js';
+import { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray } from './util.js';
 
 const TYPES = [
   'palace',
@@ -29,11 +29,8 @@ const PHOTOS = [
 ];
 
 const MAX_PRICE = 50000;
-
 const MAX_ROOMS = 6;
-
 const MAX_GUESTS = 12;
-
 const COUNT_ADVERTS = 10;
 
 const Latitude = {
@@ -46,6 +43,8 @@ const Longitude = {
   MAX: 139.80000,
 };
 
+const avatarsArray = shuffleArray(getAvatarsArray(COUNT_ADVERTS));
+
 const createAdvert = () => {
   let adverts = [];
 
@@ -56,11 +55,11 @@ const createAdvert = () => {
     adverts.push(
       {
         author: {
-          avatar: 'img/avatars/user0' + (i + 1) + '.png',
+          avatar: `img/avatars/user${avatarsArray[i]}.png`,
         },
         offer: {
           title: 'Лучшее место для отдыха!',
-          address: '' + x + ', ' + y,
+          address: `${x}, ${y}`,
           price: getRandomInt(1, MAX_PRICE),
           type: getRandomArrayElement(TYPES),
           rooms: getRandomInt(1, MAX_ROOMS),

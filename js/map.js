@@ -1,6 +1,11 @@
 import { disableForm, enableForm, adForm, adFormElements } from './form.js';
 import { createAdvert } from './data.js';
-import { createPopup } from './add-advert.js';
+import { createPopup } from './card.js';
+
+const CENTER_LAT = 35.68950;
+const CENTER_LNG = 139.69171;
+const MAIN_ICON_SIZE = 52;
+const ICON_SIZE = 40;
 
 const mapForm = document.querySelector('.map__filters');
 const mapFormFilters = mapForm.querySelectorAll('.map__filter');
@@ -20,8 +25,8 @@ const map = L.map(mapCanvas)
     enableForm(adForm, adFormElements, adForm.classList[0]);
   })
   .setView({
-    lat: 35.68950,
-    lng: 139.69171,
+    lat: CENTER_LAT,
+    lng: CENTER_LNG,
   }, 13);
 
 L.tileLayer(
@@ -33,14 +38,14 @@ L.tileLayer(
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: [MAIN_ICON_SIZE, MAIN_ICON_SIZE],
+  iconAnchor: [MAIN_ICON_SIZE / 2, MAIN_ICON_SIZE],
 });
 
 const mainPinMarker = L.marker(
   {
-    lat: 35.68950,
-    lng: 139.69171,
+    lat: CENTER_LAT,
+    lng: CENTER_LNG,
   },
   {
     draggable: true,
@@ -49,8 +54,10 @@ const mainPinMarker = L.marker(
 
 mainPinMarker.addTo(map);
 
-addressInput.value = '35.68950, 139.69171';
+// Запись координат центра в поле адреса
+addressInput.value = `${CENTER_LAT}, ${CENTER_LNG}`;
 
+// Запись координат маркера в поле адреса
 mainPinMarker.on('moveend', (evt) => {
   const lat = evt.target.getLatLng().lat.toFixed(5);
   const lng = evt.target.getLatLng().lng.toFixed(5);
@@ -58,13 +65,15 @@ mainPinMarker.on('moveend', (evt) => {
   addressInput.value = `${lat}, ${lng}`;
 })
 
+// Массив объявлений
 const adverts = createAdvert();
 
+// Создание балуна для каждого объявления
 adverts.forEach(advert => {
   const pinIcon = L.icon({
     iconUrl: 'img/pin.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconSize: [ICON_SIZE, ICON_SIZE],
+    iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
   });
 
   const pinMarker = L.marker(
