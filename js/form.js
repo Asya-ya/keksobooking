@@ -1,3 +1,18 @@
+const MinPrice = {
+  bungalow: 0,
+  flat: 1000,
+  house: 3000,
+  hotel: 5000,
+  palace: 10000,
+}
+
+const RoomCapacity = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
+}
+
 const adForm = document.querySelector('.ad-form');
 const typeInput = adForm.querySelector('#type');
 const priceInput = adForm.querySelector('#price');
@@ -7,7 +22,6 @@ const adFormElements = adForm.querySelectorAll('fieldset');
 const titleInput = adForm.querySelector('#title');
 const roomInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
-//const capacityOptions = capacityInput.children;
 
 // Неактивное состояние формы
 const disableForm = (form, elements, classForm) => {
@@ -27,39 +41,25 @@ const enableForm = (form, elements, classForm) => {
   }
 }
 
-typeInput.addEventListener('change', () => {
-  let newPrice = 0;
-
-  switch(typeInput.value) {
-    case 'flat':
-      newPrice = 1000;
-      break;
-    case 'hotel':
-      newPrice = 3000;
-      break;
-    case 'house':
-      newPrice = 5000;
-      break;
-    case 'palace':
-      newPrice = 10000;
-      break;
-  }
+// Зависимость поля цены от поля типа жилья
+const onTypeInput = () => {
+  let newPrice = MinPrice[typeInput.value];
 
   priceInput.min = newPrice;
   priceInput.placeholder = newPrice;
-});
+}
 
-timeinInput.addEventListener('change', () => {
+// Зависимость значений полей время заезда и время выезда друг от друга
+const onTimeinInput = () => {
   timeoutInput.value = timeinInput.value;
-});
+}
 
-timeoutInput.addEventListener('change', () => {
+const onTimeoutInput = () => {
   timeinInput.value = timeoutInput.value;
-})
+}
 
-disableForm(adForm, adFormElements, adForm.classList[0]);
-
-titleInput.addEventListener('input', () => {
+// Валидация полей форм
+const onTitleInput = () => {
   const valueLength = titleInput.value.length;
   const minLength = titleInput.getAttribute('minlength');
   const maxLength = titleInput.getAttribute('maxlength');
@@ -73,9 +73,9 @@ titleInput.addEventListener('input', () => {
   } else {
     titleInput.setCustomValidity('');
   }
-});
+}
 
-priceInput.addEventListener('input', () => {
+const onPriceInput = () => {
   const maxValue = Number(priceInput.getAttribute('max'));
   const minValue = Number(priceInput.getAttribute('min'));
   const value = priceInput.value;
@@ -89,27 +89,45 @@ priceInput.addEventListener('input', () => {
   }
 
   priceInput.reportValidity();
-});
+}
 
+// Зависимость допустимого количества гостей от числа комнат
 const onRoomCapacityInput = () => {
-  if (roomInput.value === '1' && capacityInput.value !== '1') {
-    capacityInput.setCustomValidity('В 1 комнате можно расположить только 1 гостя');
-  } else if (roomInput.value === '2' && capacityInput.value !== '1' && capacityInput.value !== '2') {
-    capacityInput.setCustomValidity('В 2 комнатах можно расположить 1 или 2 гостей');
-  } else if (roomInput.value === '3' && capacityInput.value !== '1' && capacityInput.value !== '2' && capacityInput.value !== '3') {
-    capacityInput.setCustomValidity('В 3 комнатах можно расположить от 1 до 3 гостей');
-  } else if (roomInput.value === '100' && capacityInput.value !== '0') {
-    capacityInput.setCustomValidity('100 комнат не для гостей');
+  if (!RoomCapacity[roomInput.value].includes(parseInt(capacityInput.value))) {
+    capacityInput.setCustomValidity('Недопустимое количество гостей');
   } else {
     capacityInput.setCustomValidity('');
   }
+
+  changeCapacityOptions();
 
   roomInput.reportValidity();
   capacityInput.reportValidity();
 }
 
+// Блокировка выбора недопустимого количества гостей
+const changeCapacityOptions = () => {
+  const capacityOptions = capacityInput.children;
 
+  for (let capacityOption of capacityOptions) {
+    if (!RoomCapacity[roomInput.value].includes(parseInt(capacityOption.value))) {
+      capacityOption.disabled = true;
+    } else {
+      capacityOption.disabled = false;
+    }
+  }
+}
+
+changeCapacityOptions();
+typeInput.addEventListener('change', onTypeInput);
+timeinInput.addEventListener('change', onTimeinInput);
+timeoutInput.addEventListener('change', onTimeoutInput);
+titleInput.addEventListener('input', onTitleInput);
+priceInput.addEventListener('input', onPriceInput);
 roomInput.addEventListener('change', onRoomCapacityInput);
 capacityInput.addEventListener('change', onRoomCapacityInput);
+
+// Неактивное состояние формы до загрузки карты
+disableForm(adForm, adFormElements, adForm.classList[0]);
 
 export { disableForm, enableForm, adForm, adFormElements};
