@@ -128,6 +128,6 @@ roomInput.addEventListener('change', onRoomCapacityInput);
 capacityInput.addEventListener('change', onRoomCapacityInput);
 
 // Неактивное состояние формы до загрузки карты
-disableForm(adForm, adFormElements, adForm.classList[0]);
-
-export { disableForm, enableForm, adForm, adFormElements};
+const disableAdForm = () => disableForm(adForm, adFormElements, adForm.classList[0]);
+const enableAdForm = () => enableForm(adForm, adFormElements, adForm.classList[0]);
+export { disableForm, enableForm, disableAdForm, enableAdForm, adForm };

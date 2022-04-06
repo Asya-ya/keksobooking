@@ -1,5 +1,4 @@
-import { disableForm, enableForm, adForm, adFormElements } from './form.js';
-import { createAdvert } from './data.js';
+import { disableForm, enableForm, enableAdForm, adForm } from './form.js';
 import { createPopup } from './card.js';
 
 const CENTER_LAT = 35.68950;
@@ -16,25 +15,28 @@ const mapCanvas = document.querySelector('#map-canvas');
 const addressInput = adForm.querySelector('#address');
 
 // Неактивное состояние карты
-disableForm(mapForm, mapFormElements, mapForm.classList[0]);
+const disableMapForm = () => disableForm(mapForm, mapFormElements, mapForm.classList[0]);
 
 // Создание карты
-const map = L.map(mapCanvas)
-  .on('load', () => {
-    enableForm(mapForm, mapFormElements, mapForm.classList[0]);
-    enableForm(adForm, adFormElements, adForm.classList[0]);
-  })
-  .setView({
-    lat: CENTER_LAT,
-    lng: CENTER_LNG,
-  }, 13);
+const map = L.map(mapCanvas);
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
+const getMap = () => {
+  map.on('load', () => {
+    enableForm(mapForm, mapFormElements, mapForm.classList[0]);
+    enableAdForm();
+  })
+    .setView({
+      lat: CENTER_LAT,
+      lng: CENTER_LNG,
+    }, 13);
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
+}
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
@@ -65,26 +67,27 @@ mainPinMarker.on('moveend', (evt) => {
   addressInput.value = `${lat}, ${lng}`;
 })
 
-// Массив объявлений
-const adverts = createAdvert();
-
 // Создание балуна для каждого объявления
-adverts.forEach(advert => {
-  const pinIcon = L.icon({
-    iconUrl: 'img/pin.svg',
-    iconSize: [ICON_SIZE, ICON_SIZE],
-    iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
-  });
+const createPinMarker = (adverts) => {
+  adverts.forEach(advert => {
+    const pinIcon = L.icon({
+      iconUrl: 'img/pin.svg',
+      iconSize: [ICON_SIZE, ICON_SIZE],
+      iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
+    });
 
-  const pinMarker = L.marker(
-    {
-      lat: advert.location.x,
-      lng: advert.location.y,
-    },
-    {
-      icon: pinIcon,
-    },
-  )
+    const pinMarker = L.marker(
+      {
+        lat: advert.location.lat,
+        lng: advert.location.lng,
+      },
+      {
+        icon: pinIcon,
+      },
+    )
 
-  pinMarker.addTo(map).bindPopup(createPopup(advert));
-})
+    pinMarker.addTo(map).bindPopup(createPopup(advert));
+  })
+};
+
+export { getMap, createPinMarker, disableMapForm }
