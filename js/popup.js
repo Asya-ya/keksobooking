@@ -1,12 +1,37 @@
-//const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+import { isEscEvent } from './util.js';
+
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const errorContainer = document.querySelector('.map__filters-container');
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
 
-// const showErrorPopup = (err) => {
-//   const errorPopup = errorTemplate.cloneNode(true);
-//   errorPopup.querySelector('.error__message').textContent = `Ошибка загрузки данных. ${err}`;
+let popup = null;
 
-//   document.body.appendChild(errorPopup);
-// }
+const closePopup = (evt) => {
+  if ((isEscEvent(evt)) || (evt.type === 'click')) {
+    evt.preventDefault();
+    popup.remove();
+    document.removeEventListener('keydown', closePopup);
+    document.removeEventListener('click', closePopup);
+  }
+}
+
+const showSuccessPopup = () => {
+  popup = successTemplate.cloneNode(true);
+  document.body.append(popup);
+
+  document.addEventListener('keydown', closePopup);
+  document.addEventListener('click', closePopup);
+}
+
+const showErrorPopup = () => {
+  const errorButton = errorTemplate.querySelector('.error__button');
+  popup = errorTemplate.cloneNode(true);
+  document.body.append(popup);
+
+  document.addEventListener('keydown', closePopup);
+  document.addEventListener('click', closePopup);
+  errorButton.addEventListener('click', () => popup.remove());
+}
 
 const showErrorServerPopup = (err) => {
   errorContainer.style.position = 'relative';
@@ -27,4 +52,4 @@ const showErrorServerPopup = (err) => {
   errorContainer.append(errorPopup);
 }
 
-export { showErrorServerPopup }
+export { showErrorServerPopup, showSuccessPopup, showErrorPopup }

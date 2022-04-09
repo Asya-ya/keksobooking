@@ -21,7 +21,7 @@ const sendData = (onSuccess, onFail, body) => {
   fetch(URL_SERVER,
     {
       method: 'POST',
-      body,
+      body: body,
     })
     .then((response) => {
       if (response.ok) {

@@ -1,6 +1,6 @@
-import './form.js';
-import { disableAdForm } from './form.js';
-import { getMap, createPinMarker, disableMapForm } from './map.js';
+//import './form.js';
+import { disableAdForm, submitAdForm, onResetButton } from './form.js';
+import { getMap, createPinMarker, disableMapForm, resetPage } from './map.js';
 import { getData } from './server.js';
 import { showErrorServerPopup } from './popup.js';
 
@@ -10,6 +10,8 @@ import { showErrorServerPopup } from './popup.js';
 disableMapForm();
 disableAdForm();
 getMap();
+submitAdForm(resetPage);
+onResetButton(resetPage);
 
 getData((data) => createPinMarker(data.slice(0, 10)),
   (message) => {

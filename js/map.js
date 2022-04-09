@@ -1,10 +1,14 @@
-import { disableForm, enableForm, enableAdForm, adForm } from './form.js';
+import { disableForm, enableForm, enableAdForm, getCoordinates, adForm } from './form.js';
 import { createPopup } from './card.js';
 
-const CENTER_LAT = 35.68950;
-const CENTER_LNG = 139.69171;
+const CENTER =
+{
+  lat: 35.68950,
+  lng: 139.69171,
+}
 const MAIN_ICON_SIZE = 52;
 const ICON_SIZE = 40;
+const ZOOM = 13;
 
 const mapForm = document.querySelector('.map__filters');
 const mapFormFilters = mapForm.querySelectorAll('.map__filter');
@@ -12,7 +16,6 @@ const mapFormFeature = mapForm.querySelector('.map__features');
 const mapFormElements = Array.from(mapFormFilters);
 mapFormElements.push(mapFormFeature);
 const mapCanvas = document.querySelector('#map-canvas');
-const addressInput = adForm.querySelector('#address');
 
 // Неактивное состояние карты
 const disableMapForm = () => disableForm(mapForm, mapFormElements, mapForm.classList[0]);
@@ -25,10 +28,7 @@ const getMap = () => {
     enableForm(mapForm, mapFormElements, mapForm.classList[0]);
     enableAdForm();
   })
-    .setView({
-      lat: CENTER_LAT,
-      lng: CENTER_LNG,
-    }, 13);
+    .setView(CENTER, ZOOM);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -45,10 +45,7 @@ const mainPinIcon = L.icon({
 });
 
 const mainPinMarker = L.marker(
-  {
-    lat: CENTER_LAT,
-    lng: CENTER_LNG,
-  },
+  CENTER,
   {
     draggable: true,
     icon: mainPinIcon,
@@ -57,14 +54,14 @@ const mainPinMarker = L.marker(
 mainPinMarker.addTo(map);
 
 // Запись координат центра в поле адреса
-addressInput.value = `${CENTER_LAT}, ${CENTER_LNG}`;
+getCoordinates(CENTER);
 
 // Запись координат маркера в поле адреса
 mainPinMarker.on('moveend', (evt) => {
   const lat = evt.target.getLatLng().lat.toFixed(5);
   const lng = evt.target.getLatLng().lng.toFixed(5);
 
-  addressInput.value = `${lat}, ${lng}`;
+  getCoordinates({lat, lng});
 })
 
 // Создание балуна для каждого объявления
@@ -90,4 +87,11 @@ const createPinMarker = (adverts) => {
   })
 };
 
-export { getMap, createPinMarker, disableMapForm }
+const resetPage = () => {
+  adForm.reset();
+  mainPinMarker.setLatLng(CENTER);
+  map.setView(CENTER, ZOOM);
+  getCoordinates(CENTER);
+}
+
+export { getMap, createPinMarker, disableMapForm, resetPage }

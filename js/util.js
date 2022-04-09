@@ -42,4 +42,8 @@ const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
 }
 
-export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray };
+const isEscEvent = (evt) => {
+  return (evt.key === 'Escape') || (evt.key === 'Esc');
+}
+
+export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray, isEscEvent };

@@ -1,3 +1,6 @@
+import { sendData } from './server.js';
+import { showSuccessPopup, showErrorPopup } from './popup.js';
+
 const MinPrice = {
   bungalow: 0,
   flat: 1000,
@@ -22,6 +25,8 @@ const adFormElements = adForm.querySelectorAll('fieldset');
 const titleInput = adForm.querySelector('#title');
 const roomInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
+const addressInput = adForm.querySelector('#address');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
 // Неактивное состояние формы
 const disableForm = (form, elements, classForm) => {
@@ -118,6 +123,32 @@ const changeCapacityOptions = () => {
   }
 }
 
+const getCoordinates = ({lat, lng}) => {
+  addressInput.value = `${lat}, ${lng}`;
+};
+
+const submitAdForm = (cb) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.target);
+
+    sendData(
+      () => {
+        cb();
+        showSuccessPopup();
+      },
+      showErrorPopup,
+      formData);
+  });
+};
+
+const onResetButton = (cb) => {
+  resetButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    cb();
+  });
+};
+
 changeCapacityOptions();
 typeInput.addEventListener('change', onTypeInput);
 timeinInput.addEventListener('change', onTimeinInput);
@@ -130,4 +161,5 @@ capacityInput.addEventListener('change', onRoomCapacityInput);
 // Неактивное состояние формы до загрузки карты
 const disableAdForm = () => disableForm(adForm, adFormElements, adForm.classList[0]);
 const enableAdForm = () => enableForm(adForm, adFormElements, adForm.classList[0]);
-export { disableForm, enableForm, disableAdForm, enableAdForm, adForm };
+
+export { disableForm, enableForm, disableAdForm, enableAdForm, submitAdForm, getCoordinates, onResetButton, adForm };
