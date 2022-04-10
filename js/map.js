@@ -1,5 +1,6 @@
 import { disableForm, enableForm, enableAdForm, getCoordinates, adForm } from './form.js';
 import { createPopup } from './card.js';
+import { filterAll } from './filter.js';
 
 const CENTER =
 {
@@ -64,27 +65,37 @@ mainPinMarker.on('moveend', (evt) => {
   getCoordinates({lat, lng});
 })
 
+const markerGroup = L.layerGroup().addTo(map);
+
+const clearMarker = () => {
+  markerGroup.clearLayers();
+};
+
 // Создание балуна для каждого объявления
 const createPinMarker = (adverts) => {
-  adverts.forEach(advert => {
-    const pinIcon = L.icon({
-      iconUrl: 'img/pin.svg',
-      iconSize: [ICON_SIZE, ICON_SIZE],
-      iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
-    });
+  clearMarker();
+  adverts
+    .filter(filterAll)
+    .slice(0, 10)
+    .forEach(advert => {
+      const pinIcon = L.icon({
+        iconUrl: 'img/pin.svg',
+        iconSize: [ICON_SIZE, ICON_SIZE],
+        iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
+      });
 
-    const pinMarker = L.marker(
-      {
-        lat: advert.location.lat,
-        lng: advert.location.lng,
-      },
-      {
-        icon: pinIcon,
-      },
-    )
+      const pinMarker = L.marker(
+        {
+          lat: advert.location.lat,
+          lng: advert.location.lng,
+        },
+        {
+          icon: pinIcon,
+        },
+      )
 
-    pinMarker.addTo(map).bindPopup(createPopup(advert));
-  })
+      pinMarker.addTo(markerGroup).bindPopup(createPopup(advert));
+    })
 };
 
 const resetPage = () => {

@@ -46,4 +46,13 @@ const isEscEvent = (evt) => {
   return (evt.key === 'Escape') || (evt.key === 'Esc');
 }
 
-export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray, isEscEvent };
+const debounce = (fn, wait) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, rest), wait);
+  };
+}
+
+export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray, isEscEvent, debounce };

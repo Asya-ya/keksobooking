@@ -1,5 +1,6 @@
 import { sendData } from './server.js';
 import { showSuccessPopup, showErrorPopup } from './popup.js';
+import { renderPreview, createImg } from './photo-preview.js';
 
 const MinPrice = {
   bungalow: 0,
@@ -27,6 +28,10 @@ const roomInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
 const addressInput = adForm.querySelector('#address');
 const resetButton = adForm.querySelector('.ad-form__reset');
+const avatarChooser = adForm.querySelector('#avatar');
+const avatarPreview = adForm.querySelector('.ad-form-header__preview img');
+const imagesChooser = adForm.querySelector('#images');
+const imagesWrap = adForm.querySelector('.ad-form__photo');
 
 // Неактивное состояние формы
 const disableForm = (form, elements, classForm) => {
@@ -157,6 +162,15 @@ titleInput.addEventListener('input', onTitleInput);
 priceInput.addEventListener('input', onPriceInput);
 roomInput.addEventListener('change', onRoomCapacityInput);
 capacityInput.addEventListener('change', onRoomCapacityInput);
+avatarChooser.addEventListener('change', () => {
+  const avatar = avatarChooser.files[0];
+  renderPreview(avatar, avatarPreview);
+});
+imagesChooser.addEventListener('change', () => {
+  const imagesPreview = createImg(imagesWrap);
+  const image = imagesChooser.files[0];
+  renderPreview(image, imagesPreview);
+})
 
 // Неактивное состояние формы до загрузки карты
 const disableAdForm = () => disableForm(adForm, adFormElements, adForm.classList[0]);
