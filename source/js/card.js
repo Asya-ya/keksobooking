@@ -1,4 +1,4 @@
-const Types = {
+const types = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -9,7 +9,6 @@ const cardTemplate = document.querySelector('#card').content.querySelector('.pop
 
 const createFeatures = (items, container) => {
   if (items) {
-    container.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
     items.forEach((item) => {
@@ -20,6 +19,7 @@ const createFeatures = (items, container) => {
       fragment.appendChild(newElement);
     });
 
+    container.innerHTML = '';
     container.appendChild(fragment);
   } else {
     container.classList.add('visually-hidden');
@@ -55,11 +55,7 @@ const getRoomsEnding = (rooms) => {
 };
 
 const getGuestsEnding = (guests) => {
-  if (guests === 1) {
-    return 'гостя';
-  } else {
-    return 'гостей';
-  }
+  return (guests === 1) ? 'гостя' : 'гостей';
 };
 
 const createPopup = ({author, offer}) => {
@@ -68,10 +64,10 @@ const createPopup = ({author, offer}) => {
   // Добавление информации в шаблон
   newCard.querySelector('.popup__title').textContent = offer.title;
   newCard.querySelector('.popup__text--address').textContent = offer.address;
-  newCard.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
-  newCard.querySelector('.popup__type').textContent = Types[offer.type];
-  newCard.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsEnding(offer.rooms)} для ${offer.guests} ${getGuestsEnding(offer.guests)}`;
-  newCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
+  newCard.querySelector('.popup__text--price').textContent = offer.price ? `${offer.price} ₽/ночь` : '';
+  newCard.querySelector('.popup__type').textContent = types[offer.type];
+  newCard.querySelector('.popup__text--capacity').textContent = (offer.rooms && offer.guests) ?`${offer.rooms} ${getRoomsEnding(offer.rooms)} для ${offer.guests} ${getGuestsEnding(offer.guests)}` : '';
+  newCard.querySelector('.popup__text--time').textContent = (offer.checkin && offer.checkout) ? `Заезд после ${offer.checkin}, выезд до ${offer.checkout}` : '';
   createFeatures(offer.features, newCard.querySelector('.popup__features'));
   newCard.querySelector('.popup__description').textContent = offer.description;
   createPhotos(offer.photos, newCard.querySelector('.popup__photos'));

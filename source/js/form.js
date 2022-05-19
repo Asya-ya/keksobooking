@@ -1,16 +1,18 @@
 import { sendData } from './server.js';
 import { showSuccessPopup, showErrorPopup } from './popup.js';
-import { renderPreview, createImg } from './photo-preview.js';
+import { renderPreview } from './render-preview.js';
 
 const MinPrice = {
-  bungalow: 0,
-  flat: 1000,
-  house: 3000,
-  hotel: 5000,
-  palace: 10000,
+  BUNGALOW: 0,
+  FLAT: 1000,
+  HOTEL: 3000,
+  HOUSE: 5000,
+  PALACE: 10000,
 }
 
-const RoomCapacity = {
+const BORDER_COLOR = '#d9d9d3';
+
+const roomCapacity = {
   1: [1],
   2: [1, 2],
   3: [1, 2, 3],
@@ -29,7 +31,8 @@ const capacityInput = adForm.querySelector('#capacity');
 const addressInput = adForm.querySelector('#address');
 const resetButton = adForm.querySelector('.ad-form__reset');
 const avatarChooser = adForm.querySelector('#avatar');
-const avatarPreview = adForm.querySelector('.ad-form-header__preview img');
+const avatarWrap = adForm.querySelector('.ad-form-header__preview');
+const avatarDefault = avatarWrap.querySelector('img');
 const imagesChooser = adForm.querySelector('#images');
 const imagesWrap = adForm.querySelector('.ad-form__photo');
 
@@ -39,8 +42,9 @@ const disableForm = (form, elements, classForm) => {
 
   for (let element of elements) {
     element.disabled = true;
+    element.style.pointerEvents = 'none';
   }
-}
+};
 
 // Активное состояние формы
 const enableForm = (form, elements, classForm) => {
@@ -48,85 +52,105 @@ const enableForm = (form, elements, classForm) => {
 
   for (let element of elements) {
     element.disabled = false;
+    element.style.pointerEvents = 'auto';
   }
-}
+};
 
-// Зависимость поля цены от поля типа жилья
-const onTypeInput = () => {
-  let newPrice = MinPrice[typeInput.value];
+// Добавляет вывод ошибки валидации
+const setValidationError = (element, errorText) => {
+  element.setCustomValidity(errorText);
+  element.style.borderColor = 'red';
+};
+
+// Удаляет вывод ошибки валидации
+const removeValidationError = (element) => {
+  element.setCustomValidity('');
+  element.style.borderColor = BORDER_COLOR;
+};
+
+// Получает новое значение цены для плейсхолдера и минимального значения
+const getNewPrice = () => {
+  let newPrice = MinPrice[typeInput.value.toUpperCase()];
 
   priceInput.min = newPrice;
   priceInput.placeholder = newPrice;
-}
+};
+
+// Зависимость поля цены от поля типа жилья
+const onTypeInput = () => {
+  getNewPrice();
+  onPriceInput();
+};
 
 // Зависимость значений полей время заезда и время выезда друг от друга
 const onTimeinInput = () => {
   timeoutInput.value = timeinInput.value;
-}
+};
 
 const onTimeoutInput = () => {
   timeinInput.value = timeoutInput.value;
-}
+};
 
-// Валидация полей форм
+// Валидация поля название
 const onTitleInput = () => {
   const valueLength = titleInput.value.length;
   const minLength = titleInput.getAttribute('minlength');
   const maxLength = titleInput.getAttribute('maxlength');
 
   if (titleInput.validity.tooShort) {
-    titleInput.setCustomValidity('Минимум ' + minLength + ' символов. Добавьте ещё ' + (minLength - valueLength) + ' симв.');
+    setValidationError(titleInput, `Минимум ${minLength} символов. Добавьте ещё ${minLength - valueLength} симв.`);
   } else if (titleInput.validity.tooLong) {
-    titleInput.setCustomValidity('Максимум ' + maxLength + ' символов. Удалите ' + (valueLength - maxLength) + ' симв.');
+    setValidationError(titleInput,  `Максимум ${maxLength} символов. Удалите ещё ${valueLength - maxLength} симв.`);
   } else if (titleInput.validity.valueMissing) {
-    titleInput.setCustomValidity('Обязательное поле.');
+    setValidationError(titleInput, 'Обязательное поле.');
   } else {
-    titleInput.setCustomValidity('');
+    removeValidationError(titleInput);
   }
-}
+};
 
+// Валидация поля цена
 const onPriceInput = () => {
   const maxValue = Number(priceInput.getAttribute('max'));
   const minValue = Number(priceInput.getAttribute('min'));
   const value = priceInput.value;
 
   if (value > maxValue) {
-    priceInput.setCustomValidity('Максимальное значение - ' + maxValue);
+    setValidationError(priceInput, `Максимальное значение - ${maxValue}`);
   } else if (value < minValue) {
-    priceInput.setCustomValidity('Минимальное значение для выбранного типа жилья - ' + minValue);
+    setValidationError(priceInput, `Минимальное значение для выбранного типа жилья - ${minValue}`);
   } else {
-    priceInput.setCustomValidity('');
+    removeValidationError(priceInput);
   }
 
   priceInput.reportValidity();
-}
+};
 
 // Зависимость допустимого количества гостей от числа комнат
 const onRoomCapacityInput = () => {
-  if (!RoomCapacity[roomInput.value].includes(parseInt(capacityInput.value))) {
-    capacityInput.setCustomValidity('Недопустимое количество гостей');
+  if (!roomCapacity[roomInput.value].includes(parseInt(capacityInput.value))) {
+    setValidationError(capacityInput, 'Недопустимое количество гостей.');
   } else {
-    capacityInput.setCustomValidity('');
+    removeValidationError(capacityInput);
   }
 
   changeCapacityOptions();
 
   roomInput.reportValidity();
   capacityInput.reportValidity();
-}
+};
 
 // Блокировка выбора недопустимого количества гостей
 const changeCapacityOptions = () => {
   const capacityOptions = capacityInput.children;
 
   for (let capacityOption of capacityOptions) {
-    if (!RoomCapacity[roomInput.value].includes(parseInt(capacityOption.value))) {
+    if (!roomCapacity[roomInput.value].includes(parseInt(capacityOption.value))) {
       capacityOption.disabled = true;
     } else {
       capacityOption.disabled = false;
     }
   }
-}
+};
 
 const getCoordinates = ({lat, lng}) => {
   addressInput.value = `${lat}, ${lng}`;
@@ -147,6 +171,20 @@ const submitAdForm = (cb) => {
   });
 };
 
+const removePreview = () => {
+  const avatarPreview = avatarWrap.querySelector('.preview');
+  const imagesPreview = imagesWrap.querySelector('.preview');
+
+  if (avatarPreview) {
+    avatarPreview.remove();
+    avatarWrap.append(avatarDefault);
+  }
+
+  if (imagesPreview) {
+    imagesPreview.remove();
+  }
+};
+
 const onResetButton = (cb) => {
   resetButton.addEventListener('click', (evt) => {
     evt.preventDefault();
@@ -164,16 +202,14 @@ roomInput.addEventListener('change', onRoomCapacityInput);
 capacityInput.addEventListener('change', onRoomCapacityInput);
 avatarChooser.addEventListener('change', () => {
   const avatar = avatarChooser.files[0];
-  renderPreview(avatar, avatarPreview);
+  renderPreview(avatar, avatarWrap, 'Аватар пользователя');
 });
 imagesChooser.addEventListener('change', () => {
-  const imagesPreview = createImg(imagesWrap);
   const image = imagesChooser.files[0];
-  renderPreview(image, imagesPreview);
-})
+  renderPreview(image, imagesWrap, 'Фотография жилья');
+});
 
-// Неактивное состояние формы до загрузки карты
 const disableAdForm = () => disableForm(adForm, adFormElements, adForm.classList[0]);
 const enableAdForm = () => enableForm(adForm, adFormElements, adForm.classList[0]);
 
-export { disableForm, enableForm, disableAdForm, enableAdForm, submitAdForm, getCoordinates, onResetButton, adForm };
+export { disableForm, enableForm, disableAdForm, enableAdForm, submitAdForm, getCoordinates, onResetButton, removePreview, getNewPrice, adForm };

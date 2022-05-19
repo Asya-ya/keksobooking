@@ -27,7 +27,8 @@ const getRandomArrayElement = (elements) => {
 };
 
 const getAvatarsArray = (max) => {
-  let avatars = []
+  let avatars = [];
+
   for (let i = 1; i <= max; i++) {
     if (i < 10) {
       avatars.push(`0${i}`);
@@ -35,16 +36,17 @@ const getAvatarsArray = (max) => {
       avatars.push(`${i}`);
     }
   }
+
   return avatars;
-}
+};
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
-}
+};
 
 const isEscEvent = (evt) => {
   return (evt.key === 'Escape') || (evt.key === 'Esc');
-}
+};
 
 const debounce = (fn, wait) => {
   let timeoutId;
@@ -53,6 +55,6 @@ const debounce = (fn, wait) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn.apply(this, rest), wait);
   };
-}
+};
 
 export { getRandomInt, getRandomNumber, getRandomArrayElement, getAvatarsArray, shuffleArray, isEscEvent, debounce };

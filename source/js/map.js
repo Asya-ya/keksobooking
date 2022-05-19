@@ -1,12 +1,13 @@
-import { disableForm, enableForm, enableAdForm, getCoordinates, adForm } from './form.js';
+import { disableForm, enableForm, enableAdForm, getCoordinates, removePreview, getNewPrice, adForm } from './form.js';
 import { createPopup } from './card.js';
 import { filterAll } from './filter.js';
 
 const CENTER =
 {
-  lat: 35.68950,
+  lat: 35.68951,
   lng: 139.69171,
-}
+};
+
 const MAIN_ICON_SIZE = 52;
 const ICON_SIZE = 40;
 const ZOOM = 13;
@@ -37,7 +38,7 @@ const getMap = () => {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     },
   ).addTo(map);
-}
+};
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
@@ -63,7 +64,7 @@ mainPinMarker.on('moveend', (evt) => {
   const lng = evt.target.getLatLng().lng.toFixed(5);
 
   getCoordinates({lat, lng});
-})
+});
 
 const markerGroup = L.layerGroup().addTo(map);
 
@@ -100,9 +101,12 @@ const createPinMarker = (adverts) => {
 
 const resetPage = () => {
   adForm.reset();
+  mapForm.reset();
   mainPinMarker.setLatLng(CENTER);
   map.setView(CENTER, ZOOM);
   getCoordinates(CENTER);
-}
+  removePreview();
+  getNewPrice();
+};
 
 export { getMap, createPinMarker, disableMapForm, resetPage }

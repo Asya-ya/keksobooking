@@ -13,7 +13,7 @@ const closePopup = (evt) => {
     document.removeEventListener('keydown', closePopup);
     document.removeEventListener('click', closePopup);
   }
-}
+};
 
 const showSuccessPopup = () => {
   popup = successTemplate.cloneNode(true);
@@ -21,7 +21,7 @@ const showSuccessPopup = () => {
 
   document.addEventListener('keydown', closePopup);
   document.addEventListener('click', closePopup);
-}
+};
 
 const showErrorPopup = () => {
   const errorButton = errorTemplate.querySelector('.error__button');
@@ -31,7 +31,7 @@ const showErrorPopup = () => {
   document.addEventListener('keydown', closePopup);
   document.addEventListener('click', closePopup);
   errorButton.addEventListener('click', () => popup.remove());
-}
+};
 
 const showErrorServerPopup = (err) => {
   errorContainer.style.position = 'relative';
@@ -50,6 +50,6 @@ const showErrorServerPopup = (err) => {
   errorPopup.textContent = `Ошибка загрузки данных. ${err}`;
 
   errorContainer.append(errorPopup);
-}
+};
 
 export { showErrorServerPopup, showSuccessPopup, showErrorPopup }

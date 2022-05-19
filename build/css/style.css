@@ -294,9 +294,9 @@ fieldset {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  flex-shrink: 0;
 
   margin-right: 10px;
-  padding: 0 15px;
 
   width: 70px;
   height: 70px;
@@ -305,6 +305,11 @@ fieldset {
 
   border-radius: 5px;
   background-color: #dadada;
+}
+
+.ad-form-header__preview img {
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .ad-form__field {

@@ -3,13 +3,12 @@ const FILTER_MIN_PRICE = 10000;
 const FILTER_MAX_PRICE = 50000;
 
 const filtersForm = document.querySelector('.map__filters');
-//const allFilters = filtersForm.children;
 const typeSelect = filtersForm.querySelector('#housing-type');
 const priceSelect = filtersForm.querySelector('#housing-price');
 const roomsSelect = filtersForm.querySelector('#housing-rooms');
 const guestsSelect = filtersForm.querySelector('#housing-guests');
 const featuresSelect = filtersForm.querySelectorAll('.map__checkbox');
-//console.log(allFilters);
+
 const filterByType = (advert) => {
   return (typeSelect.value === advert.offer.type || typeSelect.value === DEFAULT_VALUE);
 };
